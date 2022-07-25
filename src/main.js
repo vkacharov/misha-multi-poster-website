@@ -20,10 +20,10 @@ function initFbSdk() {
     });
 }
 
-await initFbSdk();
-
-const pinia = createPinia();
-const app = createApp(App);
-app.use(pinia);
-app.use(Notifications);
-app.mount('#app');
+initFbSdk().then(() => {
+    const pinia = createPinia();
+    const app = createApp(App);
+    app.use(pinia);
+    app.use(Notifications);
+    app.mount('#app');
+});
