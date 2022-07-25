@@ -17,12 +17,11 @@ export default {
         });
 
         watch([postLink, numberOfSelectedPageIds], () => {
-            console.log('WATCH', numberOfSelectedPageIds.value, postLink.value.length);
             disableSharePostButton.value = numberOfSelectedPageIds.value == 0 || postLink.value.length == 0;
         });
 
         const notifyPostSucceeded = (pageName, postId) => {
-            const postLink = `<a href="https://facebook.com/${postId}">here</a>`;
+            const postLink = `<a href="https://facebook.com/${postId}" target=”_blank”>here</a>`;
             notify({
                 title: pageName,
                 text: `Successfully posted. Click ${postLink} to open the post.`,
@@ -52,7 +51,6 @@ export default {
                     } else if (response.postResponse.error) {
                         notifyPostErrored(response.pageName, response.postResponse.error);
                     }
-                    console.log('POST response', response);
                 });
             });
         }

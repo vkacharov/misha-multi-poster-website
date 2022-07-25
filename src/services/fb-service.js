@@ -4,7 +4,7 @@ export const login = () => {
             resolve(response);
         },
         {
-            scope: 'email,pages_read_engagement,pages_manage_posts,pages_show_list',
+            scope: 'pages_read_engagement,pages_manage_posts,pages_show_list',
             return_scopes: true
         });
     });
@@ -32,7 +32,6 @@ export const getAccounts = async () => {
 export const getAccountsPage = (endpoint) => {
     return new Promise(async (resolve) => {
         FB.api(endpoint, (response) => {
-            console.log('RESPONSE', response);
             resolve(response);
         });
     });
