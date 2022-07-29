@@ -1,6 +1,6 @@
 <script>
 import { reactive } from 'vue'
-import { login, getAccounts } from '../services'
+import { login, getAccounts } from '../services/facebook'
 import TableLite from "vue3-table-lite";
 import {usePagesStore} from '../stores/pages.js'
 

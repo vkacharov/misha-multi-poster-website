@@ -1,7 +1,7 @@
 <script>
 import {usePagesStore} from '../stores/pages.js';
 
-import { shareLink } from '../services';
+import { multiPostLink } from '../services/multi-poster';
 import { ref, watch } from 'vue';
 import { notify } from "@kyvg/vue3-notification";
 
@@ -20,10 +20,11 @@ export default {
             disableSharePostButton.value = numberOfSelectedPageIds.value == 0 || postLink.value.length == 0;
         });
 
-        const notifyPostSucceeded = (pageName, postId) => {
-            const postLink = `<a href="https://facebook.com/${postId}" target=”_blank”>here</a>`;
+        const notifyPostSucceeded = (postResult) => {
+            console.log(postResult);
+            const postLink = `<a href="https://facebook.com/${postResult.id}" target=”_blank”>here</a>`;
             notify({
-                title: pageName,
+                title: postResult.pageName,
                 text: `Successfully posted. Click ${postLink} to open the post.`,
                 type: 'success',
                 group: 'succeeded', 
@@ -32,10 +33,10 @@ export default {
             });
         };
 
-        const notifyPostErrored = (pageName, error) => {
+        const notifyPostErrored = (error) => {
             notify({
-                title: pageName,
-                text: `${error.error_user_title} <br> ${error.message}`,
+                title: 'ERROR',
+                text: JSON.stringify(error),
                 type: 'error',
                 group: 'errored', 
                 duration: -1
@@ -43,17 +44,9 @@ export default {
             });
         }; 
 
-        const sharePostLink = (event) => {
-            pagesStore.selectedPages.map(page => {
-                shareLink(postLink.value, page).then(response => {
-                    if (response.postResponse.id) {
-                        notifyPostSucceeded(response.pageName, response.postResponse.id); 
-                    } else if (response.postResponse.error) {
-                        notifyPostErrored(response.pageName, response.postResponse.error);
-                    }
-                });
-            });
-        }
+        const sharePostLink = async (event) => {
+            multiPostLink(postLink.value, pagesStore.selectedPages, notifyPostSucceeded, notifyPostErrored);
+        };
 
         const clearNotifications = () => {
             ['errored', 'succeeded'].forEach(group => {
