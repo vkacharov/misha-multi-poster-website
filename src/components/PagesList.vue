@@ -1,16 +1,18 @@
 <script>
 import { reactive } from 'vue'
-import { login, getAccounts } from '../services/facebook'
+import { FacebookService } from '../services/facebook/fb-service.js'
 import TableLite from "vue3-table-lite";
 import {usePagesStore} from '../stores/pages.js'
+
+const facebookService = new FacebookService();
 
 export default {
   components: { TableLite },
 
   async setup() {
-    const loginResponse = await login();
+    const loginResponse = await facebookService.login();
     // TODO validate loginResponse
-    const accounts = await getAccounts();
+    const accounts = await facebookService.getAccounts();
     const pagesStore = usePagesStore();
 
     const rows = accounts.map(account => {

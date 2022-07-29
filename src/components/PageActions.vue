@@ -1,9 +1,11 @@
 <script>
 import {usePagesStore} from '../stores/pages.js';
 
-import { multiPostLink } from '../services/multi-poster';
+import { MiltiPosterService } from '../services/multi-poster/multi-poster-service.js';
 import { ref, watch } from 'vue';
 import { notify } from "@kyvg/vue3-notification";
+
+const multiPosterService = new MiltiPosterService();
 
 export default {
     setup() {
@@ -21,7 +23,6 @@ export default {
         });
 
         const notifyPostSucceeded = (postResult) => {
-            console.log(postResult);
             const postLink = `<a href="https://facebook.com/${postResult.id}" target=”_blank”>here</a>`;
             notify({
                 title: postResult.pageName,
@@ -45,7 +46,7 @@ export default {
         }; 
 
         const sharePostLink = async (event) => {
-            multiPostLink(postLink.value, pagesStore.selectedPages, notifyPostSucceeded, notifyPostErrored);
+            multiPosterService.multiPostLink(postLink.value, pagesStore.selectedPages, notifyPostSucceeded, notifyPostErrored);
         };
 
         const clearNotifications = () => {
