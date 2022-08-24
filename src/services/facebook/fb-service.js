@@ -52,7 +52,7 @@ export class FacebookService {
     }
 
     shareAsAttachment(postRequest, page) {
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
             const endpoint = '/' + page.id + '/feed';
             postRequest.access_token = page.access_token;
             FB.api(endpoint, 
@@ -76,7 +76,7 @@ export class FacebookService {
             const endpoint = "/" + id;
             FB.api(endpoint, 
                 'get', 
-                {fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting'},
+                {fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting,story,story_tags'},
                 (response) => {
                     if (response.error) {
                         reject(response.error);
