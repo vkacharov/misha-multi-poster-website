@@ -20,14 +20,13 @@ export class MiltiPosterService {
                 return this.#facebookService.getPageId(pageLink);
             })
             .then(pageId => {
-                const postId = pageId + '_' + this.#getPostId(link);
-                return this.#facebookService.getPost(postId);
+                const postId = pageId.id + '_' + this.#getPostId(link);
+                return this.#facebookService.getPost(postId, pageId.access_token);
             })
             .then(originalPost => {
                 if (this.#containsShareAttachment(originalPost)) {
                     const postCopy = this.#copyPost(originalPost);
                     this.#resolveActivities(postCopy);
-                    console.log('POSTING', postCopy);
                     pages.forEach(page => {
                         this.#facebookService.shareAsAttachment(postCopy, page)
                             .then(onSuccess)
@@ -61,13 +60,13 @@ export class MiltiPosterService {
 
     #getPageLink(link) {
         if (link.includes('permalink.php')) {
-            // permalink: the id is in the url
+            // permalink: the page id is in the url
             const match = link.match(/(?<=id\=)\d+/);
             if (match && match.length == 1) {
                 return `https://facebook.com/${match[0]}`;
             }
         } else {
-            // the group name is in the url
+            // the page name is in the url
             const match = link.match(/http.+(?=\/posts)/);
             if (match && match.length == 1) {
                 return match[0];

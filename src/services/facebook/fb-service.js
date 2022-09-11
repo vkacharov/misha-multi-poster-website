@@ -71,12 +71,15 @@ export class FacebookService {
         });
     }
 
-    getPost(id) {
+    getPost(id, pageAccessToken) {
         return new Promise((resolve, reject) => {
             const endpoint = "/" + id;
             FB.api(endpoint, 
                 'get', 
-                {fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting,story,story_tags'},
+                {
+                    fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting,story,story_tags',
+                    access_token: pageAccessToken
+                },
                 (response) => {
                     if (response.error) {
                         reject(response.error);
@@ -89,12 +92,15 @@ export class FacebookService {
 
     getPageId(pageLink) {
         return new Promise((resolve, reject) => {
-            FB.api('/' + pageLink, (response) => {
+            FB.api('/' + pageLink + '?fields=access_token', (response) => {
                 if (response.error) {
                     reject(response.error);
                 } else {
-                    console.log('resolve', response.id);
-                    resolve(response.id);
+                    console.log('resolve', response.id, response.access_token);
+                    resolve({
+                        id: response.id, 
+                        access_token: response.access_token
+                    });
                 }
             })
         }) 
