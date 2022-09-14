@@ -27,6 +27,7 @@ export class MiltiPosterService {
                 if (this.#containsShareAttachment(originalPost)) {
                     const postCopy = this.#copyPost(originalPost);
                     this.#resolveActivities(postCopy);
+                    console.log('POSTING', postCopy);
                     pages.forEach(page => {
                         this.#facebookService.shareAsAttachment(postCopy, page)
                             .then(onSuccess)
@@ -114,18 +115,14 @@ export class MiltiPosterService {
                 postCopy.og_object_id = activity.recipientId;
 
                 if (activity.mentionTagIds && activity.mentionTagIds.length > 0) {
-                    const tags = activity.mentionTagIds.join(',');
-                    if (postCopy.tags && postCopy.tags.length > 0) {
-                        postCopy.tags = postCopy.tags + ',' + tags;
-                    } else {
-                        postCopy.tags = tags;
-                    }
+                    postCopy.tags = activity.mentionTagIds.join(',');
                 }
             }
         }
 
         delete postCopy.story;
         delete postCopy.story_tags;
+        delete postCopy.message_tags;
     }
 
     #postFieldMappings = {
@@ -138,9 +135,33 @@ export class MiltiPosterService {
         link: {
             originalField: 'attachments',
             customMapping: this.#extractShareLinkUrl
-        }, 
+        },
+        message_tags: {
+            originalField: 'message_tags'
+        },
         message: {
-            originalField: 'message'
+            originalField: 'message',
+            customMapping: (message, currentCopy) => {
+                let currentOffset = 0;
+                let resolvedMessage = '';
+                currentCopy.message_tags.forEach(tag => {
+                    const prefix = message.slice(currentOffset, tag.offset);
+                    resolvedMessage += prefix;
+                    const mention = message.slice(tag.offset, tag.offset + tag.length);
+                    if (mention == tag.name) {
+                        resolvedMessage += '@[' + tag.id + ']';
+                    } else {
+                        resolvedMessage += mention;
+                    }
+                    currentOffset = tag.offset + tag.length;
+                });
+
+                if (currentOffset < message.length) {
+                    resolvedMessage += message.substring(currentOffset);
+                }
+
+                return resolvedMessage;
+            }
         }, 
         multi_share_end_card: {
             originalField: 'multi_share_end_card'
@@ -152,12 +173,6 @@ export class MiltiPosterService {
             originalField: 'place',
             customMapping: (place) => {
                 return place.id; 
-            }
-        }, 
-        tags: {
-            originalField: 'message_tags',
-            customMapping: (tags) => {
-                return tags.map(tag => tag.id).join(','); 
             }
         },
         story_tags: {

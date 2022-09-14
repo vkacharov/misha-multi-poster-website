@@ -3,7 +3,6 @@ import { activities, objects } from './model/activities.js';
 export class ActivityService {
     resolveActivity(story, storyTags) {
         const resolvedActivity = this.#resolveActivityFromStory(story);
-
         if (resolvedActivity) {
             const activityRecipientTag = this.#resolveActivityRecipientTag(resolvedActivity, story, storyTags);
             if (activityRecipientTag) {
