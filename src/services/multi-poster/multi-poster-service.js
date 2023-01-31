@@ -144,7 +144,8 @@ export class MiltiPosterService {
             customMapping: (message, currentCopy) => {
                 let currentOffset = 0;
                 let resolvedMessage = '';
-                currentCopy.message_tags.forEach(tag => {
+                const tags = currentCopy.message_tags ? currentCopy.message_tags : []; 
+                tags.forEach(tag => {
                     const prefix = message.slice(currentOffset, tag.offset);
                     resolvedMessage += prefix;
                     const mention = message.slice(tag.offset, tag.offset + tag.length);
