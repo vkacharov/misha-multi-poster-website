@@ -116,7 +116,7 @@ export class MiltiPosterService {
     #extractShareLinkUrl(attachments) {
         if (attachments && attachments.data.length > 0) {
             const type = attachments.data[0].type;
-            if (type == 'share') {
+            if (type == 'share' || type == 'cover_photo') {
                 return attachments.data[0].url;
             }
         }
