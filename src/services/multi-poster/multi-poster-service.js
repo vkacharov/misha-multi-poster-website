@@ -27,7 +27,6 @@ export class MiltiPosterService {
                 if (this.#containsShareAttachment(originalPost)) {
                     const postCopy = this.#copyPost(originalPost);
                     this.#resolveActivities(postCopy);
-                    console.log('POSTING', postCopy);
                     pages.forEach(page => {
                         this.#facebookService.shareAsAttachment(postCopy, page)
                             .then(onSuccess)
@@ -49,9 +48,22 @@ export class MiltiPosterService {
     }
 
     #getPostId(link) {
+        // posts with id like pfbid02SgS7mBZi92aHnSevZ7bobdAJDriZbuD4gWJBxoayEQZwBKmbxzScPuXW88QDCbZRl
         const match = link.match(/pfbid[\w\d]+/);
         if (match && match.length == 1) {
             return match[0];
+        }
+        
+        // posts with id like 1063029675148360
+        const numericalMatch = link.match(/posts\/(\d+)/);
+        if (numericalMatch && numericalMatch.length == 2) {
+            return numericalMatch[1];
+        }
+
+        // posts with id like 1063029675148360:1063029675148360
+        const colonMatch = link.match(/(\d+):(\d+)/);
+        if (colonMatch && colonMatch.length == 2) {
+            return colonMatch[1];
         }
 
         throw ({
