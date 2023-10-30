@@ -5,10 +5,12 @@ export class MiltiPosterService {
 
     #facebookService;
     #activityService;
+    #pagesStore;
 
-    constructor() {
+    constructor(pagesStore) {
         this.#facebookService = new FacebookService();
         this.#activityService = new ActivityService();
+        this.#pagesStore = pagesStore;
     }
 
     multiPostLink(link, pages, onSuccess, onError) {
@@ -21,7 +23,14 @@ export class MiltiPosterService {
             })
             .then(pageId => {
                 const postId = pageId + '_' + this.#getPostId(link);
-                return this.#facebookService.getPost(postId);
+                const page = this.#pagesStore.pageById(pageId);
+                if (!page) {
+                    throw ({
+                        message: `You don't have permissions to read post ${postId}`
+                    });
+                }
+
+                return this.#facebookService.getPost(postId, page.access_token);
             })
             .then(originalPost => {
                 if (this.#containsShareAttachment(originalPost)) {
@@ -31,7 +40,7 @@ export class MiltiPosterService {
                         this.#facebookService.shareAsAttachment(postCopy, page)
                             .then(onSuccess)
                             .catch(onError);
-                    })
+                    });
                     
                 } else {
                     pages.forEach(page => {

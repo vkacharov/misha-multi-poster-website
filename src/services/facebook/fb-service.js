@@ -71,12 +71,15 @@ export class FacebookService {
         });
     }
 
-    getPost(id) {
+    getPost(id, accessToken) {
         return new Promise((resolve, reject) => {
             const endpoint = "/" + id;
             FB.api(endpoint, 
                 'get', 
-                {fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting,story,story_tags'},
+                {
+                    fields: 'attachments,child_attachments,feed_targeting,message,multi_share_end_card,multi_share_optimized,place,message_tags,targeting,story,story_tags', 
+                    access_token: accessToken
+                },
                 (response) => {
                     if (response.error) {
                         reject(response.error);

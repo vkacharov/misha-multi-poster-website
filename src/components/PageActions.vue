@@ -5,11 +5,11 @@ import { MiltiPosterService } from '../services/multi-poster/multi-poster-servic
 import { ref, watch } from 'vue';
 import { notify } from "@kyvg/vue3-notification";
 
-const multiPosterService = new MiltiPosterService();
-
 export default {
     setup() {
         const pagesStore = usePagesStore();
+        const multiPosterService = new MiltiPosterService(pagesStore);
+
         const postLink = ref("");
         const numberOfSelectedPageIds = ref(0);
         const disableSharePostButton = ref(true);

@@ -15,6 +15,10 @@ export const usePagesStore = defineStore('pages', {
 
     numberOfSelectedPageIds: (state) => {
       return state.selectedPageIds.length;
+    }, 
+
+    pageById: (state) => {
+      return (pageId) => state.pages.find(page => page.id === pageId);
     }
   },
 
