@@ -5,7 +5,7 @@ export class FacebookService {
                 resolve(response);
             },
             {
-                scope: 'pages_read_engagement,pages_manage_posts,pages_show_list',
+                scope: 'pages_read_engagement,pages_manage_posts,pages_show_list,business_management',
                 return_scopes: true
             });
         });
